@@ -39,7 +39,7 @@ class Realitka(Service):
         listOfPublications = []
 
         async def main():
-            channel = await client.get_entity('the_cesko')
+            channel = await client.get_entity('realitka_chat')
             messages = await client.get_messages(channel, limit=2)
             for x in messages:
                 publication = Publication()
