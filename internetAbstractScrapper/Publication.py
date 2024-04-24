@@ -1,10 +1,6 @@
 import datetime
 from abc import ABCMeta
 
-# from importLocalClass import importLocalClass
-
-# from internetAbstractScrapper.TextClass import TextClass
-# TextClass = importLocalClass(r"C:\Users\Rostyslav\Desktop\wartaSoft\wartaEstateFlask\internetAbstractScrapper\TextClass.py", "TextClass")
 from internetAbstractScrapper.TextClass import TextClass
 class Publication(metaclass=ABCMeta):
     def __init__(self, **kwargs):

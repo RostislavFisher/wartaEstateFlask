@@ -11,8 +11,6 @@ from AI.Prompt.TextPrompt import TextPrompt
 from AI.Sandbox.Context import Context
 
 from wartaUtils.Config import Config
-# from importLocalClass import importLocalClass
-# from From import From
 
 if getattr(sys, 'frozen', False):
     application_path = os.path.dirname(sys.executable)
@@ -28,14 +26,6 @@ for environment in listOfEnvironments:
 from internetAbstractScrapper.Publication import Publication
 from internetAbstractScrapper.Service import Service
 from internetAppliedScrapper.Realitka.Realitka import Realitka
-
-
-# Publication = From(r"C:\Users\Rostyslav\Desktop\wartaSoft\wartaEstateFlask\internetAbstractScrapper\Publication.py").ImportLocalClass("Publication")
-# Realitka = From(r"C:\Users\Rostyslav\Desktop\wartaSoft\wartaEstateFlask\internetAppliedScrapper\Realitka\Realitka.py").ImportLocalClass("Realitka")
-
-# Publication = From(r"C:\Users\Rostyslav\Desktop\wartaSoft\wartaEstateFlask\internetAbstractScrapper\Publication.py").ImportLocalClass("Publication")
-
-# Realitka = From(r"C:\Users\Rostyslav\Desktop\wartaSoft\wartaEstateFlask\internetAppliedScrapper\Realitka\Realitka.py").ImportLocalClass("Realitka")
 
 
 app = Flask(__name__)

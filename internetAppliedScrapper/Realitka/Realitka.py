@@ -9,15 +9,6 @@ from telethon import TelegramClient
 from internetAbstractScrapper.Publication import Publication
 from internetAbstractScrapper.Service import Service
 
-# from importLocalClass import importLocalClass
-
-# Publication = importLocalClass(
-#     r"C:\Users\Rostyslav\Desktop\wartaSoft\wartaEstateFlask\internetAbstractScrapper\Publication.py",
-#     "Publication")
-#
-# Service = importLocalClass(
-#     r"C:\Users\Rostyslav\Desktop\wartaSoft\wartaEstateFlask\internetAbstractScrapper\Service.py",
-#     "Service")
 
 
 
@@ -32,7 +23,6 @@ elif __file__:
     application_path = os.path.dirname(__file__) + "\\..\\..\\"
 
 config = Config(f"{application_path}\config.json")
-# print(config.configJSON)
 telegram_api_id = config.configJSON["telegram_api_id"]
 telegram_api_hash = config.configJSON["telegram_api_hash"]
 
@@ -62,6 +52,3 @@ class Realitka(Service):
         loop.run_until_complete(main())
         client.disconnect()
         return listOfPublications
-
-# Realitka = Realitka()
-# print(Realitka.getListOfPublications())
