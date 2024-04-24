@@ -30,23 +30,6 @@ from internetAppliedScrapper.Realitka.Realitka import Realitka
 
 app = Flask(__name__)
 
-
-@app.route('/hi')
-def getListOfNewsAndLocationsInPrague():  # put application's code here
-    context = Context()
-    processor = AIProcessor(context=context)
-    realitka = Realitka()
-    news = realitka.getListOfPublications()
-    listOfPublicationsWithLocations = []
-    for new in news:
-        prompt = TextPrompt(new.text.fullTextOriginal)
-        response = processor.execute("Location", prompt=prompt)
-        publicationWithLocation = {"publication": {"text": new.text.fullTextOriginal}, "location": response.data}
-        listOfPublicationsWithLocations.append(publicationWithLocation)
-
-    return str(listOfPublicationsWithLocations)
-
-
 @app.route('/getAllPublicationsWithLocationsInOriginalLanguage')
 def getAllPublicationsWithLocationsInOriginalLanguage():
     realitka = Realitka()
