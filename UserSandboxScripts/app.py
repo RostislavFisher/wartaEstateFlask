@@ -9,7 +9,10 @@ from AI.Model.FineTunedModel import FineTunedModel
 from AI.Model.PromptedModel import PromptedModel
 from AI.Prompt.TextPrompt import TextPrompt
 from AI.Sandbox.Context import Context
-
+from AI.Sandbox.SandboxFilterUnit import *
+from AI.Sandbox.Item import Item
+from AI.Sandbox.Response import Response
+from AI.Sandbox.Sandbox import Sandbox
 from wartaUtils.Config import Config
 
 if getattr(sys, 'frozen', False):
@@ -30,28 +33,57 @@ from internetAppliedScrapper.Realitka.Realitka import Realitka
 
 app = Flask(__name__)
 
+
+
+
 @app.route('/getAllPublicationsWithLocationsInOriginalLanguage')
 def getAllPublicationsWithLocationsInOriginalLanguage():
+
+    def deleteEmpty(item, **kwargs):
+        if item.item.data["publication"].text.fullTextOriginal != "":
+            return Response(200, "Positive", item=item.item)
+        return Response(400, "Negative", item=item.item)
+
+    def getLocation(item, **kwargs):
+        prompt = TextPrompt(item.item.data["publication"].text.fullTextOriginal)
+        response = processor.execute("Location", prompt=prompt)
+
+        item.item.data["location"] = response.data
+        return Response(200, "AdditionalInformation", item=item.item)
+
+    # TODO: add filter to remove not relevant publications
+
+
     realitka = Realitka()
     context = Context()
     processor = AIProcessor(context=context)
-
+    sandbox = Sandbox(context=context)
+    filterUnit = SandboxFilterUnit()
+    filterUnit.function = deleteEmpty
+    sandbox.addUnit(filterUnit)
+    additionalInformationUnit = SandboxFilterUnit()
+    additionalInformationUnit.function = getLocation
+    sandbox.addUnit(additionalInformationUnit)
 
     listOfServices = [realitka]
     listOfNews = []
     for service in listOfServices:
         news = service.getListOfPublications()
         listOfNews.extend(news)
-
-
-    listOfPublicationsWithLocations = []
+    listOfItems = []
     for new in listOfNews:
-        prompt = TextPrompt(new.text.fullTextOriginal)
-        response = processor.execute("Location", prompt=prompt)
-        publicationWithLocation = {"publication": {"text": new.text.fullTextOriginal}, "location": response.data}
-        listOfPublicationsWithLocations.append(publicationWithLocation)
+        item = Item({"publication": new})
+        listOfItems.append(item)
 
-    return str(listOfPublicationsWithLocations)
+    sandbox.run(listOfItems)
+
+    result = sandbox.getAllResultsWaiting()
+    # print(len(result))
+
+    jsonResult = []
+    for item in result:
+        jsonResult.append({"publication": item.item.data["publication"].text.fullTextOriginal, "location": item.item.data["location"]})
+    return str(jsonResult)
 
 
 def start():
