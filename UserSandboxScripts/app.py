@@ -51,7 +51,12 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
         item.item.data["location"] = response.data
         return Response(200, "AdditionalInformation", item=item.item)
 
-    # TODO: add filter to remove not relevant publications
+    def deleteNotRealEstatePublications(item, **kwargs):
+        prompt = TextPrompt(item.item.data["publication"].text.fullTextOriginal)
+        response = processor.execute("IsRealEstatePublication", prompt=prompt)
+        if response.data['result'] == "YES":
+            return Response(200, "Positive", item=item.item)
+        return Response(400, "Negative", item=item.item)
 
 
     realitka = Realitka()
@@ -61,6 +66,9 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
     filterUnit = SandboxFilterUnit()
     filterUnit.function = deleteEmpty
     sandbox.addUnit(filterUnit)
+    filterUnitDeleteNotRealEstatePublications = SandboxFilterUnit()
+    filterUnitDeleteNotRealEstatePublications.function = deleteNotRealEstatePublications
+    sandbox.addUnit(filterUnitDeleteNotRealEstatePublications)
     additionalInformationUnit = SandboxFilterUnit()
     additionalInformationUnit.function = getLocation
     sandbox.addUnit(additionalInformationUnit)
