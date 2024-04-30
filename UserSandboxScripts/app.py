@@ -44,12 +44,6 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
             return Response(200, "Positive", item=item.item)
         return Response(400, "Negative", item=item.item)
 
-    def getLocation(item, **kwargs):
-        prompt = TextPrompt(item.item.data["publication"].text.fullTextOriginal)
-        response = processor.execute("Location", prompt=prompt)
-
-        item.item.data["location"] = response.data
-        return Response(200, "AdditionalInformation", item=item.item)
 
     def deleteNotRealEstatePublications(item, **kwargs):
         prompt = TextPrompt(item.item.data["publication"].text.fullTextOriginal)
@@ -57,6 +51,15 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
         if response.data['result'] == "YES":
             return Response(200, "Positive", item=item.item)
         return Response(400, "Negative", item=item.item)
+
+
+    def getLocation(item, **kwargs):
+        prompt = TextPrompt(item.item.data["publication"].text.fullTextOriginal)
+        response = processor.execute("Location", prompt=prompt)
+
+        item.item.data["location"] = response.data
+        return Response(200, "AdditionalInformation", item=item.item)
+
 
 
     realitka = Realitka()
