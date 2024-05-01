@@ -60,7 +60,12 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
         item.item.data["location"] = response.data
         return Response(200, "AdditionalInformation", item=item.item)
 
+    def getPrice(item, **kwargs):
+        prompt = TextPrompt(item.item.data["publication"].text.fullTextOriginal)
+        response = processor.execute("RealEstatePrice", prompt=prompt)
 
+        item.item.data["price"] = response.data
+        return Response(200, "AdditionalInformation", item=item.item)
 
     realitka = Realitka()
     context = Context()
@@ -75,6 +80,9 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
     additionalInformationUnit = SandboxFilterUnit()
     additionalInformationUnit.function = getLocation
     sandbox.addUnit(additionalInformationUnit)
+    additionalInformationPrice = SandboxFilterUnit()
+    additionalInformationPrice.function = getPrice
+    sandbox.addUnit(additionalInformationPrice)
 
     listOfServices = [realitka]
     listOfNews = []
@@ -89,11 +97,13 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
     sandbox.run(listOfItems)
 
     result = sandbox.getAllResultsWaiting()
-    # print(len(result))
 
     jsonResult = []
     for item in result:
-        jsonResult.append({"publication": item.item.data["publication"].text.fullTextOriginal, "location": item.item.data["location"]})
+        jsonResult.append({"publication": item.item.data["publication"].text.fullTextOriginal,
+                           "location": item.item.data["location"],
+                           "price": item.item.data["price"]
+                           })
     return str(jsonResult)
 
 
