@@ -30,20 +30,15 @@ from internetAbstractScrapper.Publication import Publication
 from internetAbstractScrapper.Service import Service
 from internetAppliedScrapper.Realitka.Realitka import Realitka
 
-
 app = Flask(__name__)
-
-
 
 
 @app.route('/getAllPublicationsWithLocationsInOriginalLanguage')
 def getAllPublicationsWithLocationsInOriginalLanguage():
-
     def deleteEmpty(item, **kwargs):
         if item.item.data["publication"].text.fullTextOriginal != "":
             return Response(200, "Positive", item=item.item)
         return Response(400, "Negative", item=item.item)
-
 
     def deleteNotRealEstatePublications(item, **kwargs):
         prompt = TextPrompt(item.item.data["publication"].text.fullTextOriginal)
@@ -51,7 +46,6 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
         if response.data['result'] == "YES":
             return Response(200, "Positive", item=item.item)
         return Response(400, "Negative", item=item.item)
-
 
     def getLocation(item, **kwargs):
         prompt = TextPrompt(item.item.data["publication"].text.fullTextOriginal)
@@ -98,12 +92,12 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
 
     result = sandbox.getAllResultsWaiting()
 
-    jsonResult = []
+    jsonResult = {"result": []}
     for item in result:
-        jsonResult.append({"publication": item.item.data["publication"].text.fullTextOriginal,
-                           "location": item.item.data["location"],
-                           "price": item.item.data["price"]
-                           })
+        jsonResult["result"].append({"publication": item.item.data["publication"].text.fullTextOriginal,
+                                     "location": item.item.data["location"],
+                                     "price": item.item.data["price"]
+                                     })
     return str(jsonResult)
 
 
