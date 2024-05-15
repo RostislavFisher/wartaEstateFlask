@@ -61,6 +61,13 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
         item.item.data["price"] = response.data
         return Response(200, "AdditionalInformation", item=item.item)
 
+    def getTypeOfAccommodation(item, **kwargs):
+        # ft:davinci-002:personal::9N6pociK
+        prompt = TextPrompt(item.item.data["publication"].text.fullTextOriginal)
+        response = processor.execute("TypeOfAccommodation", prompt=prompt)
+        item.item.data["TypeOfAccommodation"] = response.data
+        return Response(200, "AdditionalInformation", item=item.item)
+
     realitka = Realitka()
     context = Context()
     processor = AIProcessor(context=context)
@@ -77,6 +84,9 @@ def getAllPublicationsWithLocationsInOriginalLanguage():
     additionalInformationPrice = SandboxFilterUnit()
     additionalInformationPrice.function = getPrice
     sandbox.addUnit(additionalInformationPrice)
+    additionalInformationTypeOfAccommodation = SandboxFilterUnit()
+    additionalInformationTypeOfAccommodation.function = getTypeOfAccommodation
+    sandbox.addUnit(additionalInformationTypeOfAccommodation)
 
     listOfServices = [realitka]
     listOfNews = []
