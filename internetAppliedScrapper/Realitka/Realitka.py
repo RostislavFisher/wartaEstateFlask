@@ -40,13 +40,16 @@ class Realitka(Service):
 
         async def main():
             channel = await client.get_entity('realitka_chat')
-            messages = await client.get_messages(channel, limit=2)
+            messages = await client.get_messages(channel, limit=40)
+
+            listOfProcessedMessages = []
             for x in messages:
-                publication = Publication()
-                # publication.text.fullTextOriginal = x.raw_text
-                publication.text.fullTextOriginal = translator.translate(x.raw_text)
-                print(publication.text.fullTextOriginal)
-                listOfPublications.append(publication)
+                if x.text is not None:
+                    if x.text not in listOfProcessedMessages:
+                        listOfProcessedMessages.append(x.text)
+                        publication = Publication()
+                        publication.text.fullTextOriginal = translator.translate(x.text)
+                        listOfPublications.append(publication)
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(main())
